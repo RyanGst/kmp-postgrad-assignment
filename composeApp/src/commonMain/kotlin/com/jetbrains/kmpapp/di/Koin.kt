@@ -1,10 +1,9 @@
 package com.jetbrains.kmpapp.di
 
-import com.jetbrains.kmpapp.data.InMemoryMuseumStorage
-import com.jetbrains.kmpapp.data.KtorMuseumApi
-import com.jetbrains.kmpapp.data.MuseumApi
-import com.jetbrains.kmpapp.data.MuseumRepository
-import com.jetbrains.kmpapp.data.MuseumStorage
+import com.jetbrains.kmpapp.data.InMemoryPokemonStorage
+import com.jetbrains.kmpapp.data.PokemonApi
+import com.jetbrains.kmpapp.data.PokemonRepository
+import com.jetbrains.kmpapp.data.PokemonStorage
 import com.jetbrains.kmpapp.screens.detail.DetailScreenModel
 import com.jetbrains.kmpapp.screens.list.ListScreenModel
 import io.ktor.client.HttpClient
@@ -18,19 +17,21 @@ import org.koin.dsl.module
 
 val dataModule = module {
     single {
-        val json = Json { ignoreUnknownKeys = true }
+        val json = Json { ignoreUnknownKeys = false }
         HttpClient {
             install(ContentNegotiation) {
                 // TODO Fix API so it serves application/json
                 json(json, contentType = ContentType.Any)
             }
+
         }
     }
 
-    single<MuseumApi> { KtorMuseumApi(get()) }
-    single<MuseumStorage> { InMemoryMuseumStorage() }
+    single<PokemonApi> { PokemonApi(get()) }
+    single<PokemonStorage> { InMemoryPokemonStorage() }
     single {
-        MuseumRepository(get(), get()).apply {
+        PokemonRepository(get(), get()).apply {
+            print("PokemonRepository initialize")
             initialize()
         }
     }

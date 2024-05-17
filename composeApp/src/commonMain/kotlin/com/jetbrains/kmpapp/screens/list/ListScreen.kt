@@ -29,7 +29,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.jetbrains.kmpapp.data.MuseumObject
+import com.jetbrains.kmpapp.data.BasePokemonObject
+import com.jetbrains.kmpapp.data.PokemonObject
 import com.jetbrains.kmpapp.screens.EmptyScreenContent
 import com.jetbrains.kmpapp.screens.detail.DetailScreen
 import io.kamel.image.KamelImage
@@ -42,7 +43,6 @@ data object ListScreen : Screen {
         val screenModel: ListScreenModel = getScreenModel()
 
         val objects by screenModel.objects.collectAsState()
-
         AnimatedContent(objects.isNotEmpty()) { objectsAvailable ->
             if (objectsAvailable) {
                 ObjectGrid(
@@ -60,7 +60,7 @@ data object ListScreen : Screen {
 
 @Composable
 private fun ObjectGrid(
-    objects: List<MuseumObject>,
+    objects: List<PokemonObject>,
     onObjectClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -70,10 +70,10 @@ private fun ObjectGrid(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(8.dp)
     ) {
-        items(objects, key = { it.objectID }) { obj ->
+        items(objects, key = { it.id }) { obj ->
             ObjectFrame(
                 obj = obj,
-                onClick = { onObjectClick(obj.objectID) },
+                onClick = { onObjectClick(obj.id) },
             )
         }
     }
@@ -81,7 +81,7 @@ private fun ObjectGrid(
 
 @Composable
 private fun ObjectFrame(
-    obj: MuseumObject,
+    obj: PokemonObject,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -91,8 +91,8 @@ private fun ObjectFrame(
             .clickable { onClick() }
     ) {
         KamelImage(
-            resource = asyncPainterResource(data = obj.primaryImageSmall),
-            contentDescription = obj.title,
+            resource = asyncPainterResource(data = obj.imageUrl),
+            contentDescription = obj.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
@@ -102,8 +102,8 @@ private fun ObjectFrame(
 
         Spacer(Modifier.height(2.dp))
 
-        Text(obj.title, style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold))
-        Text(obj.artistDisplayName, style = MaterialTheme.typography.body2)
-        Text(obj.objectDate, style = MaterialTheme.typography.caption)
+        Text(obj.name, style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold))
+//        Text(obj.artistDisplayName, style = MaterialTheme.typography.body2)
+//        Text(obj.objectDate, style = MaterialTheme.typography.caption)
     }
 }

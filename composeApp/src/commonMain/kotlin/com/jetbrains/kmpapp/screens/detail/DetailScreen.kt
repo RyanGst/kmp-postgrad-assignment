@@ -34,7 +34,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.jetbrains.kmpapp.data.MuseumObject
+import com.jetbrains.kmpapp.data.BasePokemonObject
+import com.jetbrains.kmpapp.data.PokemonObject
 import com.jetbrains.kmpapp.screens.EmptyScreenContent
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
@@ -71,7 +72,7 @@ data class DetailScreen(val objectId: Int) : Screen {
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun ObjectDetails(
-    obj: MuseumObject,
+    obj: PokemonObject,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -91,8 +92,8 @@ private fun ObjectDetails(
                 .padding(paddingValues)
         ) {
             KamelImage(
-                resource = asyncPainterResource(data = obj.primaryImageSmall),
-                contentDescription = obj.title,
+                resource = asyncPainterResource(data = obj.imageUrl),
+                contentDescription = obj.name,
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -101,37 +102,10 @@ private fun ObjectDetails(
 
             SelectionContainer {
                 Column(Modifier.padding(12.dp)) {
-                    Text(obj.title, style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold))
+                    Text(obj.name, style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold))
                     Spacer(Modifier.height(6.dp))
-                    LabeledInfo(stringResource(Res.string.label_title), obj.title)
-                    LabeledInfo(stringResource(Res.string.label_artist), obj.artistDisplayName)
-                    LabeledInfo(stringResource(Res.string.label_date), obj.objectDate)
-                    LabeledInfo(stringResource(Res.string.label_dimensions), obj.dimensions)
-                    LabeledInfo(stringResource(Res.string.label_medium), obj.medium)
-                    LabeledInfo(stringResource(Res.string.label_department), obj.department)
-                    LabeledInfo(stringResource(Res.string.label_repository), obj.repository)
-                    LabeledInfo(stringResource(Res.string.label_credits), obj.creditLine)
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun LabeledInfo(
-    label: String,
-    data: String,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier.padding(vertical = 4.dp)) {
-        Spacer(Modifier.height(6.dp))
-        Text(
-            buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append("$label: ")
-                }
-                append(data)
-            }
-        )
     }
 }
